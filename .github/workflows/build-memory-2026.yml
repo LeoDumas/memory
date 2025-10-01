@@ -6,6 +6,7 @@ on:
     branches: [develop]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   build-memory-2026:
@@ -14,6 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Build project
         run: |
