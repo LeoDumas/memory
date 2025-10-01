@@ -3,11 +3,13 @@ name: Push memory 2026
 on:
   workflow_run:
     workflows: ["Build memory 2026"]
+    branches: [develop]
     types:
       - completed
 
 jobs:
   push-memory-2026:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: self-hosted
     steps:
       - name: Checkout code
