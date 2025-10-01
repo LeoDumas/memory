@@ -9,6 +9,9 @@ jobs:
   test-memory-2026:
     runs-on: self-hosted
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
       - name: Check JPEG
         run: |
           jpg_files=$(find . -name "*.jpg" -type f)
