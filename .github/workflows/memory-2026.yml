@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-memory-2026:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -28,7 +28,7 @@ jobs:
 
   build-memory-2026:
     needs: test-memory-2026
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -39,7 +39,7 @@ jobs:
 
   push-memory-2026:
     needs: build-memory-2026
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -56,16 +56,29 @@ jobs:
 
   deploy-memory-2026:
     needs: push-memory-2026
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+      - name: Copy docker-compose.yml to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml"
+          target: "~/memory-2026"
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull edurn/memory-2026
-            docker stop memory-2026 || true
-            docker rm memory-2026 || true
-            docker run -d --name memory-2026 -p 80:80 edurn/memory-2026
+            mkdir -p ~/memory-2026
+            cd ~/memory-2026
+            docker compose pull || docker-compose pull
+            docker compose down || docker-compose down || true
+            docker compose up -d || docker-compose up -d

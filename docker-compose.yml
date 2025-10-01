@@ -1,0 +1,7 @@
+services:
+  memory-2026:
+    image: edurn/memory-2026
+    container_name: memory-2026
+    ports:
+      - "80:80"
+    restart: unless-stopped
