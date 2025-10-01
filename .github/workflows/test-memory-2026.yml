@@ -21,8 +21,8 @@ jobs:
             output=$(file "$file")
             if [[ $output != *"JPEG image data"* ]]; then
               echo "JPEG corrompu: $file"
-              cp /html/data/placeholder.jpg "$file"
-              echo "Remplace $file avec /html/data/placeholder.jpg"
+              cp ./html/data/placeholder.jpg "$file"
+              echo "Remplace $file avec ./html/data/placeholder.jpg"
             else
               echo "$file est valide"
             fi
